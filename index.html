@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的日常</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #e9f5e9;
+        }
+
+        nav {
+            background-color: #2e7d32;
+            width: 100%;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .login-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+            color: #2e7d32;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .login-container button {
+            background-color: #2e7d32;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            background-color: #1b5e20;
+        }
+
+        #error-message {
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
+
+        #main-content {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        #main-content h1 {
+            text-align: center;
+            color: #2e7d32;
+        }
+
+        #post-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        #post-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        #image-input {
+            display: none;
+        }
+
+        #image-label {
+            background-color: #2e7d32;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        #image-label:hover {
+            background-color: #1b5e20;
+        }
+
+        #post-button {
+            background-color: #2e7d32;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        #post-button:hover {
+            background-color: #1b5e20;
+        }
+
+        #logout-button {
+            background-color: #2e7d32;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #logout-button:hover {
+            background-color: #1b5e20;
+        }
+
+        #posts {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #my-homepage {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        #my-homepage h1 {
+            text-align: center;
+            color: #2e7d32;
+        }
+
+        .post {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .post:last-child {
+            border-bottom: none;
+        }
+
+        .post img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>登录</h2>
+        <input type="text" id="username" placeholder="用户名">
+        <input type="password" id="password" placeholder="密码">
+        <button id="login-button">登录</button>
+        <div id="error-message">用户名或密码错误，请重试。</div>
+    </div>
+    <nav style="display: none;">
+        <a href="#" id="timeline-link">我的日常</a>
+        <a href="#" id="homepage-link">我的主页</a>
+    </nav>
+    <div id="main-content">
+        <h1>我的日常</h1>
+        <div id="post-form">
+            <textarea id="post-input" rows="4" placeholder="分享你的日常生活..."></textarea>
+            <input type="file" id="image-input" accept="image/*">
+            <label for="image-input" id="image-label">选择图片</label>
+            <button id="post-button">发布</button>
+        </div>
+        <div id="posts"></div>
+        <button id="logout-button">退出</button>
+    </div>
+    <div id="my-homepage">
+        <h1>我的主页</h1>
+        <div id="my-posts"></div>
+        <button id="logout-button">退出</button>
+    </div>
+
+    <script>
+        const loginButton = document.getElementById('login-button');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginContainer = document.querySelector('.login-container');
+        const mainContent = document.getElementById('main-content');
+        const myHomepage = document.getElementById('my-homepage');
+        const nav = document.querySelector('nav');
+        const timelineLink = document.getElementById('timeline-link');
+        const homepageLink = document.getElementById('homepage-link');
+        const postsDiv = document.getElementById('posts');
+        const myPostsDiv = document.getElementById('my-posts');
+        const errorMessage = document.getElementById('error-message');
+        const logoutButtons = document.querySelectorAll('#logout-button');
+
+        loginButton.addEventListener('click', function () {
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            if (username === '啊啊啊' && password === '111') {
+                loginContainer.style.display = 'none';
+                mainContent.style.display = 'block';
+                nav.style.display = 'block';
+                errorMessage.style.display = 'none';
+            } else {
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        const postInput = document.getElementById('post-input');
+        const imageInput = document.getElementById('image-input');
+        const postButton = document.getElementById('post-button');
+
+        postButton.addEventListener('click', function () {
+            const postContent = postInput.value;
+            const imageFile = imageInput.files[0];
+
+            if (postContent.trim()!== '' || imageFile) {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+
+                if (postContent.trim()!== '') {
+                    const textElement = document.createElement('p');
+                    textElement.textContent = postContent;
+                    postElement.appendChild(textElement);
+                }
+
+                if (imageFile) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = e.target.result;
+                        postElement.appendChild(imgElement);
+                    };
+                    reader.readAsDataURL(imageFile);
+                }
+
+                postsDiv.prepend(postElement);
+                myPostsDiv.prepend(postElement.cloneNode(true));
+                postInput.value = '';
+                imageInput.value = '';
+            }
+        });
+
+        timelineLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            mainContent.style.display = 'block';
+            myHomepage.style.display = 'none';
+        });
+
+        homepageLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            mainContent.style.display = 'none';
+            myHomepage.style.display = 'block';
+        });
+
+        logoutButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                loginContainer.style.display = 'block';
+                mainContent.style.display = 'none';
+                myHomepage.style.display = 'none';
+                nav.style.display = 'none';
+                usernameInput.value = '';
+                passwordInput.value = '';
+            });
+        });
+    </script>
+</body>
+
+</html>    
